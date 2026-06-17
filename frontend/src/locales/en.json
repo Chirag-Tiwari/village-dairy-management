@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appName": "Village Dairy Management System",
+    "name": "Name",
+    "mobileNumber": "Mobile Number",
+    "password": "Password",
+    "login": "Log in",
+    "logout": "Log out",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "village": "Village",
+    "category": "Category",
+    "date": "Date",
+    "total": "Total",
+    "amount": "Amount",
+    "milk": "Milk",
+    "fat": "Fat",
+    "snf": "SNF",
+    "ratePerLitre": "Rate per litre",
+    "protsahan": "Protsahan",
+    "protsahanRate": "Protsahan rate",
+    "status": "Status",
+    "pending": "Pending",
+    "approved": "Approved",
+    "paid": "Paid",
+    "verified": "Verified",
+    "farmer": "Farmer",
+    "secretary": "Secretary",
+    "supervisor": "Supervisor",
+    "dairy": "Dairy",
+    "litres": "Litres"
+  },
+  "auth": {
+    "loginTitle": "Log in to your account",
+    "loginSubtitle": "Enter your mobile number and password",
+    "invalidCredentials": "Mobile number or password is incorrect"
+  },
+  "milkRegister": {
+    "title": "Daily Milk Collection Register",
+    "addEntry": "Add new entry",
+    "selectFarmer": "Select farmer",
+    "totalMilk": "Total milk",
+    "totalAmount": "Total amount",
+    "totalProtsahan": "Total protsahan",
+    "entrySuccess": "Entry recorded successfully",
+    "duplicateEntry": "An entry for this farmer today already exists"
+  },
+  "dashboard": {
+    "farmer": "Farmer Dashboard",
+    "secretary": "Secretary Dashboard",
+    "supervisor": "Supervisor Dashboard",
+    "myMilkHistory": "My Milk Records",
+    "myPayments": "My Payment History",
+    "myProtsahan": "My Protsahan"
+  },
+  "nav": {
+    "monthlyRegister": "Monthly Register",
+    "protsahanRegister": "Protsahan Register",
+    "monthlyPayments": "Monthly Payments",
+    "protsahan": "Protsahan"
+  }
+}

@@ -1,0 +1,219 @@
+// Village Dairy Management System
+// Prisma schema covering the full hierarchy: Region -> Dairy -> Farmer
+// and the three core registers: MilkCollection, MonthlyPayment, ProtsahanLedger
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER // farmer
+  SECRETARY
+  SUPERVISOR
+}
+
+enum Category {
+  GEN
+  SC
+  ST
+}
+
+enum PaymentStatus {
+  PENDING
+  VERIFIED
+  APPROVED
+}
+
+enum ProtsahanStatus {
+  PENDING
+  APPROVED
+  PAID
+}
+
+// Auth identity. Every login (farmer, secretary, supervisor) is a User row.
+// Profile data lives in Farmer or Staff, linked one-to-one.
+model User {
+  id                String   @id @default(uuid())
+  mobileNumber      String   @unique
+  passwordHash      String
+  role              Role
+  isActive          Boolean  @default(true)
+  refreshTokenHash  String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  farmer  Farmer?
+  staff   Staff?
+
+  @@index([mobileNumber])
+}
+
+// Covers both SECRETARY and SUPERVISOR profiles.
+// A secretary is tied to exactly one Dairy; a supervisor owns a Region.
+model Staff {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  mobileNumber String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  managedDairy   Dairy?   @relation("DairySecretary")
+  managedRegion  Region?  @relation("RegionSupervisor")
+
+  approvedMonthlyPayments MonthlyPayment[] @relation("ApprovedByStaff")
+  approvedProtsahan       ProtsahanLedger[] @relation("ApprovedByStaff")
+  publishedSchemes        Scheme[]          @relation("PublishedByStaff")
+
+  @@index([userId])
+}
+
+// A supervisor region groups 10-15 dairies under one supervisor.
+model Region {
+  id           String   @id @default(uuid())
+  name         String
+  supervisorId String?  @unique
+  supervisor   Staff?   @relation("RegionSupervisor", fields: [supervisorId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  dairies Dairy[]
+  schemes Scheme[]
+
+  @@index([supervisorId])
+}
+
+// A local dairy collection center, managed by one secretary.
+model Dairy {
+  id           String   @id @default(uuid())
+  name         String
+  village      String
+  regionId     String
+  region       Region   @relation(fields: [regionId], references: [id])
+  secretaryId  String?  @unique
+  secretary    Staff?   @relation("DairySecretary", fields: [secretaryId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  farmers         Farmer[]
+  milkCollections MilkCollection[]
+
+  @@index([regionId])
+}
+
+model Farmer {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  mobileNumber String
+  village      String
+  category     Category
+  dairyId      String
+  dairy        Dairy    @relation(fields: [dairyId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  milkCollections MilkCollection[]
+  monthlyPayments MonthlyPayment[]
+  protsahanLedger ProtsahanLedger[]
+
+  @@index([dairyId])
+}
+
+// One row per farmer per day. This is the digitized version of the
+// physical daily milk collection register, and the source of truth
+// that the Monthly Payment Register and Protsahan Register aggregate from.
+model MilkCollection {
+  id               String   @id @default(uuid())
+  farmerId         String
+  farmer           Farmer   @relation(fields: [farmerId], references: [id])
+  dairyId          String
+  dairy            Dairy    @relation(fields: [dairyId], references: [id])
+  collectionDate   DateTime @db.Date
+  milkQuantityL    Decimal  @db.Decimal(6, 2)
+  fat              Decimal  @db.Decimal(4, 2)
+  snf              Decimal  @db.Decimal(4, 2)
+  ratePerLitre     Decimal  @db.Decimal(6, 2)
+  totalAmount      Decimal  @db.Decimal(10, 2)
+  protsahanRate    Decimal  @db.Decimal(6, 2)
+  protsahanAmount  Decimal  @db.Decimal(10, 2)
+  recordedById     String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  protsahanEntry ProtsahanLedger?
+
+  // One collection record per farmer per day per dairy.
+  @@unique([farmerId, collectionDate])
+  @@index([dairyId, collectionDate])
+  @@index([farmerId])
+}
+
+// Monthly aggregate per farmer, built from MilkCollection rows for that month.
+// Stores the computed totals plus the verification/approval state so we are
+// not re-summing on every read once a month has been verified.
+model MonthlyPayment {
+  id               String        @id @default(uuid())
+  farmerId         String
+  farmer           Farmer        @relation(fields: [farmerId], references: [id])
+  dairyId          String
+  year             Int
+  month            Int // 1-12
+  rowTotal         Decimal       @db.Decimal(10, 2) // sum of farmer's daily amounts
+  columnTotalCheck Decimal       @db.Decimal(10, 2) // sum recomputed at verification time
+  isBalanced       Boolean       @default(false)
+  status           PaymentStatus @default(PENDING)
+  approvedById     String?
+  approvedBy       Staff?        @relation("ApprovedByStaff", fields: [approvedById], references: [id])
+  approvedAt       DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([farmerId, year, month])
+  @@index([dairyId, year, month])
+}
+
+// Protsahan is released separately and often much later than the milk
+// payment itself, so it gets its own ledger and lifecycle independent
+// of MonthlyPayment.
+model ProtsahanLedger {
+  id                 String          @id @default(uuid())
+  farmerId           String
+  farmer             Farmer          @relation(fields: [farmerId], references: [id])
+  milkCollectionId   String          @unique
+  milkCollection     MilkCollection  @relation(fields: [milkCollectionId], references: [id])
+  collectionDate     DateTime        @db.Date
+  protsahanAmount    Decimal         @db.Decimal(10, 2)
+  status             ProtsahanStatus @default(PENDING)
+  approvedById       String?
+  approvedBy         Staff?          @relation("ApprovedByStaff", fields: [approvedById], references: [id])
+  approvedAt         DateTime?
+  paidAt             DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([farmerId, status])
+}
+
+model Scheme {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  regionId      String
+  region        Region   @relation(fields: [regionId], references: [id])
+  publishedById String
+  publishedBy   Staff    @relation("PublishedByStaff", fields: [publishedById], references: [id])
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([regionId, isActive])
+}

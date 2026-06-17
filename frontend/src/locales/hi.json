@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appName": "ग्राम डेयरी प्रबंधन प्रणाली",
+    "name": "नाम",
+    "mobileNumber": "मोबाइल नंबर",
+    "password": "पासवर्ड",
+    "login": "लॉगिन करें",
+    "logout": "लॉगआउट",
+    "submit": "सबमिट करें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "loading": "लोड हो रहा है...",
+    "village": "गांव",
+    "category": "वर्ग",
+    "date": "तारीख",
+    "total": "कुल",
+    "amount": "राशि",
+    "milk": "दूध",
+    "fat": "फैट",
+    "snf": "एसएनएफ",
+    "ratePerLitre": "प्रति लीटर दर",
+    "protsahan": "प्रोत्साहन",
+    "protsahanRate": "प्रोत्साहन दर",
+    "status": "स्थिति",
+    "pending": "लंबित",
+    "approved": "स्वीकृत",
+    "paid": "भुगतान किया गया",
+    "verified": "सत्यापित",
+    "farmer": "किसान",
+    "secretary": "सचिव",
+    "supervisor": "पर्यवेक्षक",
+    "dairy": "डेयरी",
+    "litres": "लीटर"
+  },
+  "auth": {
+    "loginTitle": "अपने खाते में लॉगिन करें",
+    "loginSubtitle": "अपना मोबाइल नंबर और पासवर्ड दर्ज करें",
+    "invalidCredentials": "मोबाइल नंबर या पासवर्ड गलत है"
+  },
+  "milkRegister": {
+    "title": "दैनिक दूध संग्रह रजिस्टर",
+    "addEntry": "नई प्रविष्टि जोड़ें",
+    "selectFarmer": "किसान चुनें",
+    "totalMilk": "कुल दूध",
+    "totalAmount": "कुल राशि",
+    "totalProtsahan": "कुल प्रोत्साहन",
+    "entrySuccess": "प्रविष्टि सफलतापूर्वक दर्ज की गई",
+    "duplicateEntry": "इस किसान की आज की प्रविष्टि पहले से मौजूद है"
+  },
+  "dashboard": {
+    "farmer": "किसान डैशबोर्ड",
+    "secretary": "सचिव डैशबोर्ड",
+    "supervisor": "पर्यवेक्षक डैशबोर्ड",
+    "myMilkHistory": "मेरा दूध रिकॉर्ड",
+    "myPayments": "मेरा भुगतान इतिहास",
+    "myProtsahan": "मेरा प्रोत्साहन"
+  },
+  "nav": {
+    "monthlyRegister": "मासिक रजिस्टर",
+    "protsahanRegister": "प्रोत्साहन रजिस्टर",
+    "monthlyPayments": "मासिक भुगतान",
+    "protsahan": "प्रोत्साहन"
+  }
+}

@@ -33,28 +33,32 @@ export function Sidebar({ role }: { role: Role }) {
   const { t } = useTranslation();
 
   return (
-    <nav className="flex h-full w-full flex-col gap-1 bg-slate-900 p-4 text-slate-200">
-      <div className="mb-6 flex items-center gap-2 px-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-600 text-sm font-bold text-white">
+    <nav className="flex h-full w-full flex-col gap-1.5 bg-slate-900 p-4 text-slate-200 border-r border-slate-800">
+      <div className="mb-6 flex items-center gap-2.5 px-2">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-sm font-bold text-white shadow-sm">
           ग्रा
         </div>
-        <span className="text-sm font-semibold text-white">{t('common.appName')}</span>
+        <span className="text-sm font-bold tracking-tight text-white">{t('common.appName')}</span>
       </div>
 
-      {NAV_BY_ROLE[role].map((item) => {
-        const isActive = pathname === item.href;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`rounded-md px-3 py-2 text-sm transition-colors ${
-              isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            {t(item.labelKey)}
-          </Link>
-        );
-      })}
+      <div className="flex flex-col gap-1">
+        {NAV_BY_ROLE[role].map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
+                isActive
+                  ? 'bg-brand-700 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+              }`}
+            >
+              {t(item.labelKey)}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

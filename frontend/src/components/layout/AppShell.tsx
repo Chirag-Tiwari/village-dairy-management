@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { Button } from '@/components/common/Button';
@@ -11,11 +11,13 @@ import { loggedOut } from '@/redux/slices/authSlice';
 import { setAccessToken } from '@/services/apiClient';
 import { authApi } from '@/services/auth.service';
 import { useTranslation } from '@/lib/i18n';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const { t } = useTranslation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -42,21 +44,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Mobile sidebar overlay */}
-      {mobileNavOpen ? (
-        <div className="fixed inset-0 z-40 flex md:hidden">
-          <div className="w-64">
-            <Sidebar role={user.role} />
+      <AnimatePresence>
+        {mobileNavOpen ? (
+          <div className="fixed inset-0 z-40 flex md:hidden">
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="w-64 z-50 h-full"
+            >
+              <Sidebar role={user.role} />
+            </motion.div>
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              aria-label="Close menu"
+              className="fixed inset-0 bg-slate-950/40 z-40 cursor-default"
+              onClick={() => setMobileNavOpen(false)}
+            />
           </div>
-          <button
-            aria-label="Close menu"
-            className="flex-1 bg-slate-900/40"
-            onClick={() => setMobileNavOpen(false)}
-          />
-        </div>
-      ) : null}
+        ) : null}
+      </AnimatePresence>
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
+        <header className="flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 py-3">
           <button
             className="rounded-md p-2 text-slate-600 hover:bg-slate-100 md:hidden"
             onClick={() => setMobileNavOpen(true)}
@@ -79,7 +92,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -24 }}
+              transition={{ duration: 0.24, ease: 'easeInOut' }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </main>
       </div>
     </div>
   );

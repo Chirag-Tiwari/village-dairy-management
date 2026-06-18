@@ -14,6 +14,22 @@ import {
 import { MilkEntry, DailyRegisterResponse } from '@/types';
 import { SkeletonRow } from '@/components/common/SkeletonRow';
 import { useTranslation } from '@/lib/i18n';
+import { motion } from 'framer-motion';
+
+const tableBodyVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.02,
+    },
+  },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -16 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+};
 
 interface MilkRegisterTableProps {
   data: DailyRegisterResponse | null;
@@ -111,27 +127,36 @@ export function MilkRegisterTable({ data, isLoading }: MilkRegisterTableProps) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <motion.tbody
+            variants={tableBodyVariants}
+            initial="hidden"
+            animate="visible"
+            className="divide-y divide-slate-100"
+          >
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} columns={columns.length} />)
             ) : table.getRowModel().rows.length === 0 ? (
-              <tr>
+              <motion.tr variants={rowVariants}>
                 <td colSpan={columns.length} className="px-4 py-8 text-center text-slate-400">
                   No entries recorded for this date yet.
                 </td>
-              </tr>
+              </motion.tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="transition-colors hover:bg-slate-50">
+                <motion.tr
+                  key={row.id}
+                  variants={rowVariants}
+                  className="transition-colors hover:bg-slate-50"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="whitespace-nowrap px-4 py-3">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
-                </tr>
+                </motion.tr>
               ))
             )}
-          </tbody>
+          </motion.tbody>
           {data && data.entries.length > 0 ? (
             <tfoot className="bg-slate-50 font-semibold text-slate-900">
               <tr>

@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,6 +42,7 @@ export function LoginForm() {
         error={errors.mobileNumber?.message}
         {...register('mobileNumber')}
       />
+      
       <Input
         label={t('common.password')}
         type="password"
@@ -53,7 +52,7 @@ export function LoginForm() {
       />
 
       {error ? (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-lg bg-red-50 border border-red-200 px-3.5 py-2 text-sm text-red-700">
           {error === 'Invalid mobile number or password' ? t('auth.invalidCredentials') : error}
         </p>
       ) : null}

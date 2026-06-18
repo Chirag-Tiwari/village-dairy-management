@@ -23,21 +23,37 @@
 
 @layer components {
   .card {
-    @apply rounded-lg border border-slate-200 bg-white shadow-sm transition-shadow duration-200;
+    @apply rounded-xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300;
+  }
+  .card-glass {
+    @apply rounded-xl border border-white/20 bg-white/70 shadow-lg backdrop-blur-md transition-all duration-300;
   }
   .card-interactive {
-    @apply card hover:shadow-md hover:border-slate-300;
+    @apply card hover:shadow-md hover:border-slate-300/80 active:shadow-sm;
   }
   .skeleton {
     @apply rounded-md bg-slate-200/70 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)] bg-[length:400px_100%] animate-shimmer;
   }
   .input-base {
-    @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-brand-500;
+    @apply w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-200 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 focus:outline-none;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-brand-700 hover:shadow-brand-500/10 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98];
   }
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded bg-slate-300/60 hover:bg-slate-400/80;
+}
+

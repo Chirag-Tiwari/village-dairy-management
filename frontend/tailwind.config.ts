@@ -39,19 +39,15 @@ const config: Config = {
           '0%': { backgroundPosition: '-400px 0' },
           '100%': { backgroundPosition: '400px 0' },
         },
-        'milk-fill': {
-          '0%, 100%': { height: '15%' },
-          '50%': { height: '85%' },
-        },
-        'milk-wave': {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       animation: {
         shimmer: 'shimmer 1.6s infinite linear',
-        'milk-fill': 'milk-fill 1.8s ease-in-out infinite',
-        'milk-wave': 'milk-wave 1.2s linear infinite',
+        'fade-in': 'fade-in 0.15s ease-out forwards',
+        'spin-slow': 'spin 3s linear infinite',
       },
     },
   },

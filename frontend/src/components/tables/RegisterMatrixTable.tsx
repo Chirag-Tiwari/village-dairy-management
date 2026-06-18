@@ -5,6 +5,22 @@ import { RegisterMatrix, MatrixRow } from "@/types";
 import { Badge } from "@/components/common/Badge";
 import { SkeletonRow } from "@/components/common/SkeletonRow";
 import { useTranslation } from "@/lib/i18n";
+import { motion } from "framer-motion";
+
+const tableBodyVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.02,
+    },
+  },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -16 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: "easeOut" } },
+};
 
 interface RegisterMatrixTableProps {
   matrix:
@@ -78,9 +94,18 @@ export function RegisterMatrixTable({
               ) : null}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <motion.tbody
+            variants={tableBodyVariants}
+            initial="hidden"
+            animate="visible"
+            className="divide-y divide-slate-100"
+          >
             {matrix.rows.map((row) => (
-              <tr key={row.farmerId} className="hover:bg-slate-50">
+              <motion.tr
+                key={row.farmerId}
+                variants={rowVariants}
+                className="hover:bg-slate-50"
+              >
                 <td className="sticky left-0 z-10 bg-white px-4 py-3 font-medium text-slate-900">
                   {row.farmerName}
                 </td>
@@ -100,9 +125,9 @@ export function RegisterMatrixTable({
                 {renderRowBadge ? (
                   <td className="px-4 py-3">{renderRowBadge(row)}</td>
                 ) : null}
-              </tr>
+              </motion.tr>
             ))}
-          </tbody>
+          </motion.tbody>
           <tfoot className="bg-slate-50 font-semibold text-slate-900">
             <tr>
               <td className="sticky left-0 z-10 bg-slate-50 px-4 py-3">
